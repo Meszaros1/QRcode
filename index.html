@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT QR HUNT</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --text: #c9d1d9;
+            --accent: #238636;
+            --error: #da3633;
+        }
+        body { font-family: 'Courier New', Courier, monospace; background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .section { display: none; border: 1px solid #30363d; padding: 20px; border-radius: 6px; background: #161b22; }
+        .active { display: block; }
+        
+        /* Progress Bar */
+        .progress-container { margin-bottom: 20px; background: #30363d; border-radius: 10px; height: 20px; overflow: hidden; }
+        #progress-bar { background: var(--accent); height: 100%; width: 0%; transition: width 0.5s; }
+        
+        h2 { color: var(--accent); }
+        input[type="text"] { background: #0d1117; border: 1px solid #30363d; color: white; padding: 10px; width: 80%; margin-bottom: 10px; }
+        button { background: var(--accent); color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; }
+        .hint { margin-top: 20px; padding: 15px; background: #23863622; border-left: 4px solid var(--accent); display: none; }
+        img { max-width: 100%; border-radius: 5px; margin-top: 10px; }
+        .final-box { display: none; background: gold; color: black; padding: 20px; font-weight: bold; margin-top: 20px; text-align: center; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>01001001 01010100 Hunt</h1>
+    
+    <div class="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+    <p id="progress-text">Postup: 0 / 7</p>
+
+    <div id="final-password" class="final-box">
+        🎉 GRATULACE! TAJNÉ HESLO: "ALAN_TURING_1954"
+    </div>
+
+    <div id="home" class="section active">
+        <h2>Vítej, operátore.</h2>
+        <p>Tvým úkolem je najít a dekódovat 7 stanovišť. Naskenuj první kód pro start!</p>
+    </div>
+
+    <div id="stanoviste1" class="section">
+        <h2>Stanoviště 1: Binární kód</h2>
+        <p>Kolik je v desítkové soustavě binární číslo <strong>1010</strong>?</p>
+        <input type="text" id="ans1" placeholder="Odpověď...">
+        <button onclick="checkAnswer(1, '10')">Ověřit</button>
+        <div id="hint1" class="hint">Správně! Další kód hledej u největšího routeru v patře.</div>
+    </div>
+
+    <div id="stanoviste2" class="section">
+        <h2>Stanoviště 2: Hardware</h2>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Desktop_computer_system.svg/300px-Desktop_computer_system.svg.png" alt="Hardware">
+        <p>Která část je "mozkem" počítače?</p>
+        <input type="radio" name="ans2" value="gpu"> GPU<br>
+        <input type="radio" name="ans2" value="cpu"> CPU<br>
+        <input type="radio" name="ans2" value="ram"> RAM<br><br>
+        <button onclick="checkRadio(2, 'cpu')">Ověřit</button>
+        <div id="hint2" class="hint">Výborně! Další stopa je v učebně č. 3 pod klávesnicí.</div>
+    </div>
+
+    <div id="stanoviste7" class="section">
+        <h2>Stanoviště 7: Finále</h2>
+        <p>Jak se říká chybě v programu?</p>
+        <input type="text" id="ans7" placeholder="Odpověď...">
+        <button onclick="checkAnswer(7, 'bug')">Ověřit</button>
+        <div id="hint7" class="hint">Hotovo! Vrať se na start pro tajné heslo.</div>
+    </div>
+
+</div>
+
+<script>
+    // Seznam všech ID stanovišť
+    const totalStations = 7;
+
+    function updateProgress() {
+        let solved = 0;
+        for(let i=1; i<=totalStations; i++) {
+            if(localStorage.getItem('stanoviste' + i) === 'solved') {
+                solved++;
+                // Pokud je vyřešeno, ukážeme nápovědu rovnou (aby se při návratu neztratila)
+                const hint = document.getElementById('hint' + i);
+                if(hint) hint.style.display = 'block';
+            }
+        }
+        
+        const percent = (solved / totalStations) * 100;
+        document.getElementById('progress-bar').style.width = percent + '%';
+        document.getElementById('progress-text').innerText = `Postup: ${solved} / ${totalStations}`;
+
+        if(solved === totalStations) {
+            document.getElementById('final-password').style.display = 'block';
+        }
+    }
+
+    function checkAnswer(id, correct) {
+        const input = document.getElementById('ans' + id).value.toLowerCase().trim();
+        if(input === correct.toLowerCase()) {
+            saveSuccess(id);
+        } else {
+            alert("Špatný kód! Zkus to znovu.");
+        }
+    }
+
+    function checkRadio(id, correct) {
+        const selected = document.querySelector(`input[name="ans${id}"]:checked`);
+        if(selected && selected.value === correct) {
+            saveSuccess(id);
+        } else {
+            alert("To není správná součástka.");
+        }
+    }
+
+    function saveSuccess(id) {
+        localStorage.setItem('stanoviste' + id, 'solved');
+        document.getElementById('hint' + id).style.display = 'block';
+        updateProgress();
+    }
+
+    function route() {
+        const hash = window.location.hash || '#home';
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(s => s.classList.remove('active'));
+        
+        const target = document.querySelector(hash);
+        if(target) target.classList.add('active');
+        updateProgress();
+    }
+
+    window.addEventListener('hashchange', route);
+    window.addEventListener('load', route);
+</script>
+
+</body>
+</html>
