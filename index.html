@@ -139,7 +139,7 @@
             <input type="radio" name="ans5" value="J"> J
         </div>
         <button onclick="checkRadio(5, 'J')">Ověřit</button>
-        <div id="hint5" class="hint">Přesně tak, index [2] je třetí řádek a [1] je druhý sloupec, tedy J! <strong>Nápověda:</strong> Další kód se poblíž brány.</div>
+        <div id="hint5" class="hint">Přesně tak, index [2] je třetí řádek a [1] je druhý sloupec, tedy J! <strong>Nápověda:</strong> Další kód je poblíž brány.</div>
     </div>
 
     <div id="stanoviste6" class="section">
@@ -169,6 +169,53 @@
 </div>
 
 <script>
+    const secretKeyIndex = 13; // Klíč pro hru na stanovišti 2 (index 13 = střed)
+    let attemptsLeft = 13;
+    let gameActive = true;
+
+    function initGridGame() {
+        const grid = document.getElementById('key-grid');
+        grid.innerHTML = '';
+        attemptsLeft = 13;
+        gameActive = true;
+        document.getElementById('attempts-left').innerText = `Zbývající pokusy: ${attemptsLeft}`;
+        document.getElementById('attempts-left').style.color = '#58a6ff';
+
+        for (let i = 0; i < 25; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('grid-cell');
+            cell.innerText = '?';
+            cell.dataset.index = i;
+            cell.addEventListener('click', handleGridClick);
+            grid.appendChild(cell);
+        }
+    }
+
+    function handleGridClick(e) {
+        if (!gameActive || localStorage.getItem('stanoviste2') === 'solved') return;
+        const cell = e.target;
+        if (cell.classList.contains('miss') || cell.classList.contains('hit')) return;
+        const index = parseInt(cell.dataset.index);
+
+        if (index === secretKeyIndex) {
+            cell.classList.add('hit');
+            cell.innerText = '🔑';
+            gameActive = false;
+            saveSuccess(2);
+        } else {
+            cell.classList.add('miss');
+            cell.innerText = 'X';
+            attemptsLeft--;
+            document.getElementById('attempts-left').innerText = `Zbývající pokusy: ${attemptsLeft}`;
+            if (attemptsLeft <= 4) document.getElementById('attempts-left').style.color = 'var(--error)';
+
+            if (attemptsLeft <= 0) {
+                gameActive = false;
+                alert("🔴 Vyčerpal jsi pokusy! Mřížka se restartuje, ale klíč zůstává na stejném místě.");
+                initGridGame();
+            }
+        }
+    }
     const totalStations = 7;
 
     function updateProgress() {
