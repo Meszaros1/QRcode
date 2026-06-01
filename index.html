@@ -31,6 +31,12 @@
         .final-box { display: none; background: #f9e2af; color: #1e1e2e; padding: 20px; font-weight: bold; margin-top: 20px; text-align: center; border-radius: 10px; border: 2px solid #df8e1d; }
         .question-group { margin-bottom: 20px; text-align: left; background: #21262d; padding: 15px; border-radius: 5px; }
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 5px; margin-top: 5px; }
+
+        /* OPRAVA: Přidané chybějící styly pro 5x5 mřížku */
+        .grid-5x5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; max-width: 250px; margin: 15px auto; }
+        .grid-cell { width: 45px; height: 45px; background: #30363d; border: 1px solid #21262d; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; border-radius: 4px; user-select: none; }
+        .grid-cell.miss { background: var(--error); color: white; }
+        .grid-cell.hit { background: var(--accent); color: white; }
     </style>
 </head>
 <body>
@@ -50,13 +56,14 @@
 
     <div id="home" class="section active">
         <h2>Vítej v systému...</h2>
-        <p>Tvým úkolem je najít a dekódovat 7 stanovišť rozmístěných po škole. Naskenuj první QR kód pro start!</p>
+        <p>Tvým úkolem je najít a dekódovat 7 stanovišť rozmístěných po areálu školy. Naskenuj první QR kód pro start!</p>
     </div>
 
     <div id="stanoviste1" class="section">
         <h2>Stanoviště 1: Binární kód</h2>
         <p>Převeď binární číslo do naší desítkové soustavy:</p>
         <div class="code-block">1010</div>
+        <div class="code-block">Příklad: 0001 = 1, 0100 = 4, 1000 = 8</div>
         <input type="text" id="ans1" placeholder="Napiš číslo...">
         <button onclick="checkAnswer(1, '10')">Ověřit</button>
         <div id="hint1" class="hint">Správně! <strong>Nápověda k dalšímu stanovišti:</strong> Hledej u košů, kam patří míče.</div>
@@ -66,8 +73,8 @@
         <h2>Stanoviště 2: Rozhodovací logika (If/Else)</h2>
         <p>Podívej se na následující kód ve Scratchi. Co postava řekne?</p>
         <div class="code-block">
-<img src="Podminka-promenne.png" alt="Scratch">
-</div>
+            <img src="Podminka-promenne.png" alt="Scratch">
+        </div>
         <div class="question-group">
             <input type="radio" name="ans2" value="1"> Výborně<br>
             <input type="radio" name="ans2" value="2"> Chvalitebně<br>
@@ -121,7 +128,7 @@
         <div id="hint4" class="hint">Správně! Slovo bylo "Kyklop". <strong>Nápověda:</strong> Běž k soše.</div>
     </div>
 
-   <div id="stanoviste5" class="section">
+    <div id="stanoviste5" class="section">
         <h2>Stanoviště 5: Datová matice (Souřadnice)</h2>
         <p>V programování se mřížky čtou pomocí indexů [řádek][sloupec], začíná se od **0**.</p>
         <p>Máme tuto matici znaků:</p>
@@ -163,13 +170,13 @@
         <p id="attempts-left" style="font-weight: bold; color: #58a6ff;">Zbývající pokusy: 13</p>
         
         <div class="grid-5x5" id="key-grid"></div>
-        <div id="hint2" class="hint">Neuvěřitelné, našel jsi klíč! <strong>Nápověda:</strong> Vrať se na start.</div>
+        <div id="hint7" class="hint">Neuvěřitelné, našel jsi klíč! <strong>Nápověda:</strong> Vrať se na start.</div>
     </div>
 
 </div>
 
 <script>
-    const secretKeyIndex = 13; // Klíč pro hru na stanovišti 2 (index 13 = střed)
+    const secretKeyIndex = 13; // Klíč pro hru na stanovišti 7 (index 13 = střed)
     let attemptsLeft = 13;
     let gameActive = true;
 
@@ -192,7 +199,8 @@
     }
 
     function handleGridClick(e) {
-        if (!gameActive || localStorage.getItem('stanoviste2') === 'solved') return;
+        // OPRAVA: Změněno zkontrolování z localStorage 'stanoviste2' na 'stanoviste7'
+        if (!gameActive || localStorage.getItem('stanoviste7') === 'solved') return;
         const cell = e.target;
         if (cell.classList.contains('miss') || cell.classList.contains('hit')) return;
         const index = parseInt(cell.dataset.index);
@@ -201,7 +209,8 @@
             cell.classList.add('hit');
             cell.innerText = '🔑';
             gameActive = false;
-            saveSuccess(2);
+            // OPRAVA: Změněno ukládání na stanoviště 7
+            saveSuccess(7);
         } else {
             cell.classList.add('miss');
             cell.innerText = 'X';
@@ -216,6 +225,7 @@
             }
         }
     }
+    
     const totalStations = 7;
 
     function updateProgress() {
@@ -256,7 +266,6 @@
         }
     }
 
-    // Speciální kontrola pro stanoviště 3 (tři otázky najednou)
     function checkTripleRadio() {
         const q1 = document.querySelector('input[name="ans3_1"]:checked');
         const q2 = document.querySelector('input[name="ans3_2"]:checked');
@@ -287,6 +296,12 @@
         
         const target = document.querySelector(hash);
         if(target) target.classList.add('active');
+        
+        // OPRAVA: Pokud skočíme na hash #stanoviste7, vygeneruj mřížku
+        if (hash === '#stanoviste7') {
+            initGridGame();
+        }
+        
         updateProgress();
     }
 
