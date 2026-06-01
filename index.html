@@ -121,18 +121,25 @@
         <div id="hint4" class="hint">Správně! Slovo bylo "Kyklop". <strong>Nápověda:</strong> Běž k soše.</div>
     </div>
 
-    <div id="stanoviste5" class="section">
-        <h2>Stanoviště 5: Počítačové sítě</h2>
-        <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=500&q=80" alt="Síťové kabely">
-        <p>Každé zařízení připojené k internetu potřebuje svou unikátní adresu. Jak se tato adresa zkráceně nazývá?</p>
+   <div id="stanoviste5" class="section">
+        <h2>Stanoviště 5: Datová matice (Souřadnice)</h2>
+        <p>V programování se mřížky čtou pomocí indexů [řádek][sloupec], začíná se od **0**.</p>
+        <p>Máme tuto matici znaků:</p>
+        <div class="code-block" style="line-height: 1.2; font-size: 1.2em;">
+  [0] [1] [2] [3]
+[0] A   B   C   D
+[1] E   F   G   H
+[2] I   J   K   L
+[3] M   N   O   P</div>
+        <p>Jaké písmeno se nachází na souřadnici <strong>[2][1]</strong>?</p>
         <div class="question-group">
-            <input type="radio" name="ans5" value="1"> URL adresa<br>
-            <input type="radio" name="ans5" value="2"> DNS adresa<br>
-            <input type="radio" name="ans5" value="3"> IP adresa<br>
-            <input type="radio" name="ans5" value="4"> MAC adresa
+            <input type="radio" name="ans5" value="F"> F<br>
+            <input type="radio" name="ans5" value="G"> G<br>
+            <input type="radio" name="ans5" value="I"> I<br>
+            <input type="radio" name="ans5" value="J"> J
         </div>
-        <button onclick="checkRadio(5, '3')">Ověřit</button>
-        <div id="hint5" class="hint">Přesně tak, IP adresa! <strong>Nápověda:</strong> Další kód se ukrývá poblíž brány.</div>
+        <button onclick="checkRadio(5, 'J')">Ověřit</button>
+        <div id="hint5" class="hint">Přesně tak, index [2] je třetí řádek a [1] je druhý sloupec, tedy J! <strong>Nápověda:</strong> Další kód se poblíž brány.</div>
     </div>
 
     <div id="stanoviste6" class="section">
@@ -149,17 +156,14 @@
     </div>
 
     <div id="stanoviste7" class="section">
-        <h2>Stanoviště 7: Skladování dat</h2>
-        <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=500&q=80" alt="Elektronika">
-        <p>Které z těchto úložišť nemá žádné pohyblivé mechanické části (je čistě elektronické), a proto je mnohem rychlejší?</p>
-        <div class="question-group">
-            <input type="radio" name="ans7" value="1"> HDD (Pevný disk)<br>
-            <input type="radio" name="ans7" value="2"> CD-ROM<br>
-            <input type="radio" name="ans7" value="3"> SSD disk<br>
-            <input type="radio" name="ans7" value="4"> Disketa
-        </div>
-        <button onclick="checkRadio(7, '3')">Ověřit</button>
-        <div id="hint7" class="hint">Skvěle! SSD je správně. <strong>Nápověda:</strong> Vrať se na start </div>
+        <h2>Stanoviště 7: Firewall - Najdi přístupový klíč</h2>
+        <p>V mřížce 5x5 je ukrytý jeden správný klíč. Máš přesně <strong>13 pokusů</strong> na jeho nalezení.</p>
+        <p style="color: #ffb454;">⚠️ Pokud pokusy vyčerpáš, mřížka se uzamkne a restartuje. Klíč ale zůstává na stejném místě!</p>
+        
+        <p id="attempts-left" style="font-weight: bold; color: #58a6ff;">Zbývající pokusy: 13</p>
+        
+        <div class="grid-5x5" id="key-grid"></div>
+        <div id="hint2" class="hint">Neuvěřitelné, našel jsi klíč! <strong>Nápověda:</strong> Vrať se na start.</div>
     </div>
 
 </div>
